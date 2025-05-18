@@ -1,43 +1,43 @@
 function hmm=baum_welch(hmm,obs)
 
-mix=hmm.mix; %¸ßË¹»ìºÏÄ£ĞÍ
-N=hmm.N; %HMMµÄ×´Ì¬Êı
-K=length(obs); %ÑµÁ·Êı¾İÑù±¾Êı
-SIZE=size(obs(1).fea,2); %ÌØÕ÷Ê¸Á¿µÄ¸öÊı
+mix=hmm.mix; %é«˜æ–¯æ··åˆæ¨¡å‹
+N=hmm.N; %HMMçš„çŠ¶æ€æ•°
+K=length(obs); %è®­ç»ƒæ•°æ®æ ·æœ¬æ•°
+SIZE=size(obs(1).fea,2); %ç‰¹å¾çŸ¢é‡çš„ä¸ªæ•°
 
 for loop = 1:40
-   % ----¼ÆËãÇ°Ïò, ºóÏò¸ÅÂÊ¾ØÕó
+   % ----è®¡ç®—å‰å‘, åå‘æ¦‚ç‡çŸ©é˜µ
    for k=1:K
      param(k)=getparam(hmm,obs(k).fea);
    end
 
-   %----ÖØ¹À×ªÒÆ¸ÅÂÊ¾ØÕóA
+   %----é‡ä¼°è½¬ç§»æ¦‚ç‡çŸ©é˜µA
    for i=1:N-1
      demon=0;
      for k=1:K  
         tmp=param(k).ksai(:,i,:);
-        demon=demon+sum(tmp(:)); %¶ÔÊ±¼ät£¬jÇóºÍ
+        demon=demon+sum(tmp(:)); %å¯¹æ—¶é—´tï¼Œjæ±‚å’Œ
      end
      for j=i:i+1  
         nom=0;
         for k=1:K  
             tmp=param(k).ksai(:,i,j);
-            nom=nom+sum(tmp(:));  %¶ÔÊ±¼ätÇóºÍ
+            nom=nom+sum(tmp(:));  %å¯¹æ—¶é—´tæ±‚å’Œ
         end
         hmm.trans(i,j)=nom/demon;
      end
    end
 
-   %----ÖØ¹ÀÊä³ö¹Û²âÖµ¸ÅÂÊB
-   for j=1:N %×´Ì¬Ñ­»·
-     for l=1:hmm.M(j) %»ìºÏ¸ßË¹µÄÊıÄ¿
-        %¼ÆËã¸÷»ìºÏ³É·ÖµÄ¾ùÖµºÍĞ­·½²î¾ØÕó
+   %----é‡ä¼°è¾“å‡ºè§‚æµ‹å€¼æ¦‚ç‡B
+   for j=1:N %çŠ¶æ€å¾ªç¯
+     for l=1:hmm.M(j) %æ··åˆé«˜æ–¯çš„æ•°ç›®
+        %è®¡ç®—å„æ··åˆæˆåˆ†çš„å‡å€¼å’Œåæ–¹å·®çŸ©é˜µ
         nommean=zeros(1,SIZE);
         nomvar=zeros(1,SIZE);
         denom=0;
-        for k=1:K  %ÑµÁ·ÊıÄ¿µÄÑ­»·
-           T=size(obs(k).fea,1);  %Ö¡Êı
-           for t=1:T   %Ö¡Êı£¨Ê±¼ä£©µÄ±éÀú
+        for k=1:K  %è®­ç»ƒæ•°ç›®çš„å¾ªç¯
+           T=size(obs(k).fea,1);  %å¸§æ•°
+           for t=1:T   %å¸§æ•°ï¼ˆæ—¶é—´ï¼‰çš„éå†
              x=obs(k).fea(t,:);
              nommean=nommean+param(k).gama(t,j,l)*x;
              nomvar=nomvar+param(k).gama(t,j,l)*(x-mix(j).mean(l,:)).^2;
@@ -47,7 +47,7 @@ for loop = 1:40
         hmm.mix(j).mean(l,:)=nommean/denom;
         hmm.mix(j).var(l,:)=nomvar/denom;
    
-        %¼ÆËã¸÷»ìºÏ³É·ÖµÄÈ¨ÖØ
+        %è®¡ç®—å„æ··åˆæˆåˆ†çš„æƒé‡
         nom=0;
         denom=0;
         for k=1:K
